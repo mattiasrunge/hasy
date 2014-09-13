@@ -19,7 +19,7 @@ A TV has some common functions, these are just some examples.
 ### Light
 A light could be a dimmer or just a switch.
 #### Values
-* Level (0-100% or 0-25)
+* Level (0-100% or 0-255)
 * Power (ON, OFF)
 
 #### Events
