@@ -11,6 +11,7 @@ A TV has some common functions, these are just some examples.
 * Power (ON, OFF, DISPLAY_OFF, ...)
 * Channel
 * Volume (0-100% or 0-255)
+
 #### Events
 * Emit: valueChange
 * Listen: valueSet
@@ -20,6 +21,7 @@ A light could be a dimmer or just a switch.
 #### Values
 * Level (0-100% or 0-25)
 * Power (ON, OFF)
+
 #### Events
 * Emit: valueChange
 * Listen: valueSet
@@ -30,6 +32,7 @@ A receiver which can decode HDMI signals etc.
 * Source ( HDMI1, HDMI2, ...)
 * Power (ON, OFF, ...)
 * Volume (0-100% or 0-255)
+
 #### Events
 * Emit: valueChange
 * Listen: valueSet
@@ -38,6 +41,7 @@ A receiver which can decode HDMI signals etc.
 A sensor that detects if a door or window is open or closed.
 #### Values
 * State (OPEN, CLOSED)
+
 #### Events
 * Emit: valueChange
 
@@ -45,12 +49,14 @@ A sensor that detects if a door or window is open or closed.
 A sensor that detects the current temperature.
 #### Values
 * Temperature
+
 #### Events
 * Emit: valueChange
 
 ### Remote control sensor
 A remote control of some kind.
 #### Values
+
 #### Events
 * Emit: buttonDown (buttonId)
 * Emit: buttonUp (buttonId)
@@ -59,6 +65,7 @@ A remote control of some kind.
 ### Remote control transmitter
 Send signals as a remote control.
 #### Values
+
 #### Events
 * Listen: buttonDown (buttonId)
 * Listen: buttonUp (buttonId)
@@ -70,6 +77,7 @@ Receive and control an Kodi instance
 * nowPlaying (information)
 * playing (TRUE, FALSE)
 * timeLeft
+
 #### Events
 * Listen: playPause
 * Listen: playStop
