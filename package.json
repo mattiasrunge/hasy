@@ -1,0 +1,21 @@
+{
+  "name"         : "tv-control",
+  "version"      : "0.0.1",
+  "description"  : "LG TV control via serial port.",
+  "author"       : "Mattias Runge <mattias@runge.se>",
+  "repository"   : {
+    "type" : "git",
+    "url"  : "git://github.com/mattiasrunge/tv-control.git"
+  },
+  "engines"      : {
+    "node": ">= 0.10.0"
+  },
+  "license"      : "GPLv2",
+  "dependencies" : {
+    "bower"                : "1.3.8",
+    "express"              : "4.8.0",
+    "serialport"           : "1.4.5",
+    "socket.io"            : "1.0.6",
+    "achain.js"            : "0.0.8"
+  }
+}

@@ -1,0 +1,100 @@
+<!DOCTYPEhtml>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Control</title>
+
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="page-header">
+          <h1>
+            <span data-bind="text: unit"></span>
+            <small>Basic control interface</small>
+          </h1>
+        </div>
+      </div>
+      <div class="row">
+        <table class="table table-striped">
+          <tbody data-bind="foreach: properties">
+            <tr>
+              <th data-bind="text: $data.name"></th>
+              <td>
+                <input type="text" class="form-control input-sm" data-bind="value: $data.value">
+              </td>  
+              <td>
+                <button type="button" class="btn btn-sm btn-primary" data-bind="click: $root.set">Execute</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io.connect();
+      var Model = function() {
+        this.units = ko.observable({});
+        this.unit = ko.observable("lgtv");
+        this.list = ko.pureComputed(function() {
+          return this.units()[this.unit()];
+        }.bind(this));
+        
+        this.set = function(data) {
+          socket.emit("setProperty", { unit: this.unit(), name: data.name, value: data.value() });
+        }.bind(this);
+        
+        this.properties = ko.pureComputed(function() {
+          var list = [];
+          
+          if (this.units()[this.unit()]) {
+            $.each(this.units()[this.unit()].properties, function(name, property) {
+              list.push(property);
+            });
+          }
+          
+          return list;
+        }.bind(this));
+      };
+      
+      var model = new Model();
+      
+      socket.on("propertyChange", function(data) {
+        console.log(data);
+        
+        model.units()[data.unit].properties[data.name].value(data.value);
+      });
+      
+      socket.emit("getUnits", {}, function(list) {
+        units = {};
+        
+        $.each(list, function(key, unit) {
+          units[key] = list[key];
+
+          $.each(units[key].properties, function(name, value) {
+            units[key].properties[name].value = ko.observable(units[key].properties[name].value);
+          });
+        });
+        
+        model.units(units);
+      });
+    
+      model.unit.subscribe(function(value) {
+        document.title = "Control | " + value;
+      });
+    
+      $(function() {
+        ko.applyBindings(model, $("body").get(0));
+      });
+    </script>
+  </body>
+</html>
