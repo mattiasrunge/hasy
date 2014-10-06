@@ -70,13 +70,13 @@
         var model = new Model();
 
         socket.on("propertyChange", function(data) {
-            console.log(data);
+            console.log("propertyChange", data);
 
-            model.units()[data.unitId].properties[data.name].value(data.value);
+            model.units()[data.unitId].properties[data.data.name].value(data.data.newValue);
         });
 
         socket.on("error", function(data) {
-            console.log(data);
+            console.log("error", data);
         });
 
         socket.emit("getUnits", {}, function(list) {
