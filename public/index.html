@@ -72,7 +72,7 @@
         socket.on("propertyChange", function(data) {
             console.log(data);
 
-            model.units()[data.unit].properties[data.name].value(data.value);
+            model.units()[data.unitId].properties[data.name].value(data.value);
         });
 
         socket.on("error", function(data) {
