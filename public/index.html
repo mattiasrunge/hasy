@@ -74,6 +74,10 @@
         model.units()[data.unit].properties[data.name].value(data.value);
       });
 
+      socket.on("error", function(data) {
+        console.log(data);
+      });
+
       socket.emit("getUnits", {}, function(list) {
         units = {};
 
