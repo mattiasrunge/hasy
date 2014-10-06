@@ -77,6 +77,8 @@
       socket.emit("getUnits", {}, function(list) {
         units = {};
 
+            console.log(list);
+
         $.each(list, function(key, unit) {
           units[key] = list[key];
 
