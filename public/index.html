@@ -41,6 +41,7 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
+        var actionIdCounter = 1;
         var socket = io.connect();
         var Model = function() {
             this.units = ko.observable({});
@@ -50,7 +51,7 @@
             }.bind(this));
 
             this.set = function(data) {
-                socket.emit("setProperty", { unitId: this.unit(), name: data.name, value: data.value() });
+                socket.emit("setProperty", { unitId: this.unit(), name: data.name, value: data.value(), actionId: actionIdCounter++ });
             }.bind(this);
 
             this.properties = ko.pureComputed(function() {
