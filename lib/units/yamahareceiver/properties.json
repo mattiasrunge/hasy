@@ -23,10 +23,10 @@
         "value": "00",
         "type": {
             "name": "range",
-            "min": 0,
-            "max": 100
+            "min": -800,
+            "max": 160
         },
-        "command": "kf %id% %value%\r"
+        "command": "<YAMAHA_AV cmd=\"PUT\"><Main_Zone><Volume><Lvl><Val>%value%</Val><Exp>1</Exp><Unit>dB</Unit></Lvl></Volume></Main_Zone></YAMAHA_AV>"
     },
     "Source": {
         "value": "HDMI2",

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 var argv = require('yargs').argv;
 var Hasy = require("./lib/hasy");
 
