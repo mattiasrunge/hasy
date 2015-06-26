@@ -24,7 +24,7 @@
             <tr>
               <th data-bind="text: $data.name"></th>
               <td>
-                <input type="text" class="form-control input-sm" data-bind="value: $data.value">
+                <input type="text" class="form-control input-sm" data-bind="value: $data.input, disable: $data.disabled">
               </td>
               <td>
                 <button type="button" class="btn btn-sm btn-primary" data-bind="click: $root.set">Execute</button>
@@ -32,6 +32,7 @@
             </tr>
           </tbody>
         </table>
+        <div class="alert alert-info" role="alert" data-bind="text: message, visible: message() !== '', attr: { class: 'alert alert-' + messageType() }" style="white-space: pre"></div>
       </div>
     </div>
 
@@ -42,6 +43,7 @@
 
     <script>
         var actionIdCounter = 1;
+        var actions = {};
         var socket = io.connect();
         var Model = function() {
             this.units = ko.observable({});
@@ -49,9 +51,16 @@
             this.list = ko.pureComputed(function() {
                 return this.units()[this.unit()];
             }.bind(this));
+            this.message = ko.observable("");
+            this.messageType = ko.observable("info");
 
             this.set = function(data) {
-                socket.emit("setProperty", { unitId: this.unit(), name: data.name, value: data.value(), actionId: actionIdCounter++ });
+                var actionId = actionIdCounter++;
+                data.disabled(true);
+
+                socket.emit("setProperty", { unitId: this.unit(), name: data.name, value: data.input(), actionId: actionId });
+
+                actions[actionId] = data;
             }.bind(this);
 
             this.properties = ko.pureComputed(function() {
@@ -73,10 +82,27 @@
             console.log("propertyChange", data);
 
             model.units()[data.unitId].properties[data.data.name].value(data.data.newValue);
+            model.units()[data.unitId].properties[data.data.name].input(data.data.newValue);
+
+            actions[data.actionId].disabled(false);
+            delete actions[data.actionId];
+
+            model.message(JSON.stringify(data, null, 2));
+            model.messageType("success");
         });
 
         socket.on("error", function(data) {
             console.log("error", data);
+
+            if (data.actionId) {
+                actions[data.actionId].disabled(false);
+                actions[data.actionId].input(actions[data.actionId].value());
+
+                delete actions[data.actionId];
+            }
+
+            model.message(JSON.stringify(data, null, 2));
+            model.messageType("danger");
         });
 
         socket.emit("getUnits", {}, function(list) {
@@ -88,7 +114,9 @@
                 units[key] = list[key];
 
                 $.each(units[key].properties, function(name, value) {
+                    units[key].properties[name].input = ko.observable(units[key].properties[name].value);
                     units[key].properties[name].value = ko.observable(units[key].properties[name].value);
+                    units[key].properties[name].disabled = ko.observable(false);
                 });
             });
 
