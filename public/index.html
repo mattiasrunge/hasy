@@ -47,7 +47,7 @@
         var socket = io.connect();
         var Model = function() {
             this.units = ko.observable({});
-            this.unit = ko.observable("yamahareceiver");
+            this.unit = ko.observable("lgtv");
             this.list = ko.pureComputed(function() {
                 return this.units()[this.unit()];
             }.bind(this));
