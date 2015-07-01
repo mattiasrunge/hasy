@@ -47,7 +47,7 @@
         var socket = io.connect();
         var Model = function() {
             this.units = ko.observable({});
-            this.unit = ko.observable("lgtv");
+            this.unit = ko.observable("yamahareceiver");
             this.list = ko.pureComputed(function() {
                 return this.units()[this.unit()];
             }.bind(this));
@@ -84,8 +84,11 @@
             model.units()[data.unitId].properties[data.data.name].value(data.data.newValue);
             model.units()[data.unitId].properties[data.data.name].input(data.data.newValue);
 
-            actions[data.actionId].disabled(false);
-            delete actions[data.actionId];
+            if (data.actionId && actions[data.actionId]) {
+                actions[data.actionId].disabled(false);
+
+                delete actions[data.actionId];
+            }
 
             model.message(JSON.stringify(data, null, 2));
             model.messageType("success");
@@ -94,7 +97,7 @@
         socket.on("error", function(data) {
             console.log("error", data);
 
-            if (data.actionId) {
+            if (data.actionId && actions[data.actionId]) {
                 actions[data.actionId].disabled(false);
                 actions[data.actionId].input(actions[data.actionId].value());
 

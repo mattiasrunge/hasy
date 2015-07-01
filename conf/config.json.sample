@@ -1,5 +1,28 @@
 {
     "port": 3000,
     "units": {
+        "yamahareceiver": {
+            "type": "yamahareceiver",
+            "name": "Receivern",
+            "hostname": "192.168.1.3"
+        },
+        "pbutton": {
+            "type": "kbbutton",
+            "name": "P-button",
+            "keys": [ ]
+        }
+    },
+    "units2": {
+
+        "lgtv": {
+            "type": "lgtv",
+            "name": "LG TV",
+            "device": "/dev/ttyUSB0",
+            "baudrate": 9600
+        },
+        "vardagsrumstak": {
+            "type": "tellsticklight",
+            "name": "Vardagsrummet Tak"
+        }
     }
 }
