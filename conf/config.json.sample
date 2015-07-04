@@ -10,6 +10,13 @@
             "type": "kbbutton",
             "name": "P-button",
             "keys": [ ]
+        },
+        "jawbonesleep": {
+          "token": "<insert your pushbullet token here>",
+          "name": "Jawbone UP sleep mode",
+          "type": "pushbullet",
+          "match": "(enabled|disabled)",
+          "matchGroup": 1
         }
     },
     "units2": {
