@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Control</title>
 
-    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
     <div class="container">
@@ -36,9 +36,9 @@
       </div>
     </div>
 
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/knockout/build/output/knockout-latest.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -47,7 +47,7 @@
         var socket = io.connect();
         var Model = function() {
             this.units = ko.observable({});
-            this.unit = ko.observable("yamahareceiver");
+            this.unit = ko.observable("vardagsrumstak");
             this.list = ko.pureComputed(function() {
                 return this.units()[this.unit()];
             }.bind(this));

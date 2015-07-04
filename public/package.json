@@ -1,0 +1,16 @@
+{
+  "name": "hasy",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mattias Runge <mattias@runge.se>",
+  "license": "GPL-2.0",
+  "dependencies": {
+    "bootstrap": "^3.3.5",
+    "jquery": "^2.1.4",
+    "knockout": "^3.3.0"
+  }
+}

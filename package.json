@@ -14,11 +14,10 @@
   "dependencies": {
     "achain.js": "0.0.8",
     "bluebird": "^2.9.26",
-    "bower": "1.3.12",
     "express": "4.8.0",
     "gkm": "0.0.4",
     "glob": "^5.0.10",
-    "nodejs-telldus": "git@github.com:Zebusch/nodejs-telldus.git",
+    "node-tellsock": "git@github.com:mattiasrunge/node-tellsock.git",
     "request": "^2.55.0",
     "serialport": "1.4.5",
     "socket.io": "1.0.6",
@@ -26,6 +25,6 @@
     "yargs": "1.3.1"
   },
   "scripts": {
-    "install": "cd public && ../node_modules/bower/bin/bower install"
+    "install": "cd public && npm install"
   }
 }
