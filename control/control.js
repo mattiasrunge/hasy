@@ -4,19 +4,21 @@ let promisifyAll = require("bluebird").promisifyAll;
 let co = require("bluebird").coroutine;
 let fs = promisifyAll(require("fs"));
 let path = require("path");
+let logger = require("../lib/logger")(module);
 
 module.exports = function() {
     let sockets = [];
     let eventHandlers = [];
     let config = {};
     let policies = [];
+    let actions = {};
 
     this.loadConfiguration = co(function*(file) {
         file = path.resolve(file || path.join(__dirname, "conf", "config.json"));
 
         config = JSON.parse(yield fs.readFileAsync(file, "utf8"));
 
-        console.log("Configuration loaded successfully from " + file);
+        logger.info("Configuration loaded successfully from " + file);
 
         // Default values
         config.hosts = config.hosts || [];
@@ -31,7 +33,7 @@ module.exports = function() {
 
             yield this.loadPolicies();
 
-            console.log("Hasy Control initialized!");
+            logger.info("Hasy Control initialized!");
         } catch (error) {
             console.error(error);
             console.error(error.stack);
@@ -39,37 +41,74 @@ module.exports = function() {
         }
     }, this);
 
-    this.triggerPropertyChange = function(data) {
+    this.triggerPropertyChange = co(function*(data) {
         let handlers = eventHandlers.filter(function(item) {
             return item.unitId === data.unitId && item.name === data.data.name;
         });
 
-        for (let handler of handlers) {
-            handler.eventHandler(data.data);
+        let socket = sockets.filter(function(socket) {
+            return Object.keys(socket.units).indexOf(data.unitId) !== -1;
+        })[0];
+
+        if (socket && socket.units[data.unitId].properties[data.data.name]) {
+            socket.units[data.unitId].properties[data.data.name].value = data.data.newValue;
         }
-    };
+
+        if (actions[data.actionId]) {
+            actions[data.actionId].resolve();
+        }
+
+        for (let handler of handlers) {
+            co(handler.eventHandler)(data.data);
+        }
+    }, this);
 
     this.onPropertyChange = function(unitId, name, eventHandler) {
         eventHandlers.push({ unitId: unitId, name: name, eventHandler: eventHandler });
     };
 
-    this.setProperty = function(unitId, name, value, actionId) {
-        console.log("setProperty", arguments);
-        var socket = sockets.filter(function(socket) {
+    this.setProperty = function(unitId, name, value) {
+        return new Promise(function(resolve, reject) {
+            let socket = sockets.filter(function(socket) {
+                return Object.keys(socket.units).indexOf(unitId) !== -1;
+            })[0];
+
+            if (!socket) {
+                return reject("No socket found with a unitId of " + unitId);
+            }
+
+            if (!socket.units[unitId].properties[name]) {
+                return reject("No such property " + name + " on unit " + unitId);
+            }
+
+            if (socket.units[unitId].properties[name].value === value) {
+                return resolve();
+            }
+
+            let actionId = new Date().getTime(); // TODO: Make into UUID
+
+            actions[actionId] = { resolve: resolve, reject: reject };
+            socket.emit("setProperty", { unitId: unitId, name: name, value: value, actionId: actionId });
+        }.bind(this));
+    };
+
+    this.getProperty = function(unitId, name) {
+        let socket = sockets.filter(function(socket) {
             return Object.keys(socket.units).indexOf(unitId) !== -1;
         })[0];
 
         if (!socket) {
-            console.log("No socket found with a unitId of " + unitId);
-            return;
+            logger.warn("No socket found with a unitId of " + unitId);
+            return null;
         }
 
-        socket.emit("setProperty", { unitId: unitId, name: name, value: value, actionId: actionId || 0 });
+        if (!socket.units[unitId].properties[name]) {
+            logger.warn("No such property " + name + " on unit " + unitId);
+            return null;
+        }
+
+        return socket.units[unitId].properties[name].value;
     };
-    /*
-     l ist[*id].getProperty = function(name, value) {
-     socket.emit("setProperty", { unitId: list[id], name: id, value: value, actionId: 0 });
-    });*/
 
     this.connectToServers = co(function*() {
         for (let host of config.servers) {
@@ -80,13 +119,15 @@ module.exports = function() {
                     socket.units = list;
                     sockets.push(socket);
 
-                    console.log("Connected to " + host + " and found unitIds: " + Object.keys(socket.units).join(", "));
+                    logger.info("Connected to " + host + " and found unitIds: " + Object.keys(socket.units).join(", "));
                 });
             });
 
-            socket.on("propertyChange", this.triggerPropertyChange.bind(this));
+            socket.on("propertyChange", this.triggerPropertyChange);
+            // TODO: Listen for error and reject action
 
             socket.on("disconnect", function() {
+                logger.info("Disconnected from " + host + ", will try to reconnect...");
                 sockets.splice(sockets.indexOf(socket), 1);
             });
         }
@@ -101,6 +142,6 @@ module.exports = function() {
             policies.push(new PolicyType(this));
         }
 
-        console.log("Loaded policies from: " + config.policies.join(", "));
+        logger.info("Loaded policies from: " + config.policies.join(", "));
     }, this);
 };
