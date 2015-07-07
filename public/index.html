@@ -7,6 +7,8 @@
         <title>Control</title>
 
         <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -29,12 +31,28 @@
                         <table class="table table-striped">
                             <tbody data-bind="foreach: properties">
                                 <tr>
-                                    <th data-bind="text: $data.name"></th>
+                                    <th style="width: 160px;" data-bind="text: $data.name"></th>
                                     <td>
-                                        <input type="text" class="form-control input-sm" data-bind="value: $data.input, disable: $data.disabled">
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-primary" data-bind="click: $root.set">Execute</button>
+                                        <div data-bind="visible: $data.type !== 'range' && $data.type !== 'enum'">
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" class="form-control input-sm" data-bind="value: $data.input, disable: $data.disabled">
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" style="margin-left: 10px;" class="btn btn-sm btn-primary" data-bind="click: setProperty.bind(null, $data, $data.input)">Execute</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div data-bind="visible: $data.type === 'range'">
+                                            <div data-bind="slider: $data"></div>
+                                        </div>
+                                        <div data-bind="visible: $data.type === 'enum'">
+                                            <div class="btn-group" role="group" data-bind="foreach: $data.values">
+                                                <button type="button" class="btn btn-default" data-bind="text: $data, css: { active: $data === $parent.value(), 'btn-primary': $data === $parent.value() }, click: setProperty.bind(null,$parent, $data)"></button>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -47,12 +65,57 @@
 
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
         <script src="node_modules/knockout/build/output/knockout-latest.js"></script>
         <script src="/socket.io/socket.io.js"></script>
 
         <script>
+            ko.bindingHandlers.slider = {
+                init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+                    var property = valueAccessor();
+                    var options = {
+                        value: parseInt(ko.unwrap(property.value), 10),
+                        min: property.min,
+                        max: property.max,
+                        step: property.step
+                    };
+
+                    element.slider = $(element).slider(options);
+
+                    var subscription1 = property.value.subscribe(function(value) {
+                        element.slider.slider("setValue", parseInt(value, 10));
+                    });
+
+                    var subscription2 = property.disabled.subscribe(function(value) {
+                        element.slider.slider({ "disabled": value });
+                    });
+
+                    $(element).on("slideStop", function(event) {
+                        setProperty(property, event.value);
+                    });
+
+                    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                        subscription1.dispose();
+                        subscription2.dispose();
+                        element.slider.slider("destroy");
+                        $(element).off("slideStop");
+                    });
+                }
+            };
+
             var actionIdCounter = 1;
             var actions = {};
+
+
+            function setProperty(property, value) {
+                var actionId = actionIdCounter++;
+                property.disabled(true);
+
+                socket.emit("setProperty", { unitId: property.unitId, name: property.name, value: ko.unwrap(value), actionId: actionId });
+
+                actions[actionId] = property;
+            }
+
             var socket = io.connect();
             var Model = function() {
                 this.units = ko.observableArray();
@@ -61,12 +124,7 @@
                 this.messageType = ko.observable("info");
 
                 this.set = function(data) {
-                    var actionId = actionIdCounter++;
-                    data.disabled(true);
-
-                    socket.emit("setProperty", { unitId: this.unit().unitId, name: data.name, value: data.input(), actionId: actionId });
-
-                    actions[actionId] = data;
+                    setProperty(data);
                 }.bind(this);
 
                 this.properties = ko.pureComputed(function() {
@@ -137,6 +195,7 @@
                         unit.properties[name].input = ko.observable(unit.properties[name].value);
                         unit.properties[name].value = ko.observable(unit.properties[name].value);
                         unit.properties[name].disabled = ko.observable(false);
+                        unit.properties[name].unitId = unit.unitId;
                     });
 
                     model.units.push(unit);

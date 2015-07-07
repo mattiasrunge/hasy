@@ -10,6 +10,7 @@
   "license": "GPL-2.0",
   "dependencies": {
     "bootstrap": "^3.3.5",
+    "bootstrap-slider": "^4.10.0",
     "jquery": "^2.1.4",
     "knockout": "^3.3.0"
   }
