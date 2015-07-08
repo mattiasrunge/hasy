@@ -85,7 +85,7 @@ module.exports = function() {
                 return resolve();
             }
 
-            let actionId = new Date().getTime(); // TODO: Make into UUID
+            let actionId = new Date().getTime().toString(36) + Math.floor(Math.random() * 1e10).toString(36); // TODO: Make into UUID
 
             actions[actionId] = { resolve: resolve, reject: reject };
             socket.emit("setProperty", { unitId: unitId, name: name, value: value, actionId: actionId });
