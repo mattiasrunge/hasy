@@ -6,11 +6,49 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Control</title>
 
-        <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" rel="stylesheet">
-        <link href="style.css" rel="stylesheet">
+        <!-- <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.grey-deep_orange.min.css" /> -->
+        <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-orange.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+        <script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     </head>
     <body>
+      <!-- Simple header with scrollable tabs. -->
+      <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header">
+          <div class="mdl-layout__header-row">
+            <!-- Title -->
+            <span class="mdl-layout-title">Hasy Node Control</span>
+          </div>
+          <!-- 
+          <div class="mdl-layout__tab-bar mdl-js-ripple-effect" role="tablist" data-bind="foreach: units">
+            <a role="presentation" class="mdl-layout__tab" data-bind="css: { 'is-active': $parent.unit() === $data }, text: $data.name, attr: { href: '#' + $data.name }"></a>
+          </div> -->
+        </header>
+        <div class="mdl-layout__drawer">
+          <span class="mdl-layout-title">Stropp</span>
+        </div>
+        <main class="mdl-layout__content">
+          <!-- <section class="mdl-layout__tab-panel" data-bind="attr: { id: _unit.name }, css: { 'is-active': $parent.unit() === _unit }"> -->
+          <div class="page-content mdl-grid demo-grid-1" data-bind="foreach: { data: units, as: '_unit' }">
+            <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp mdl-card__supporting-text mdl-color--grey-100">
+              <div class="mdl-card__title">
+                <h4 class="mdl-card__title-text" data-bind="text: _unit.name"></h4>
+              </div>
+              <div class="mdl-card__supporting-text mdl-card__border mdl-grid" data-bind="foreach: { data: Object.keys(_unit.properties), as: '_key' }">
+                <div class="mdl-cell mdl-cell--4-col" data-bind="text: _key"></div>
+                <div class="mdl-cell mdl-cell--4-col"
+                  <p style="width:300px">
+                    <input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="10" value="4" step="2" />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+              <!-- </section> -->
+        </main>
+      </div>
+<!-- 
         <div class="container">
             <div class="row">
                 <div class="page-header">
@@ -61,7 +99,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <script src="node_modules/jquery/dist/jquery.min.js"></script>
         <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -197,7 +235,7 @@
                         unit.properties[name].disabled = ko.observable(false);
                         unit.properties[name].unitId = unit.unitId;
                     });
-
+                  console.log(unit);
                     model.units.push(unit);
 
                     if (!model.unit()) {
