@@ -4,215 +4,34 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Control</title>
+        <title>Hasy Unit Interface</title>
 
-        <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" rel="stylesheet">
-        <link href="style.css" rel="stylesheet">
+        <link rel="stylesheet" href="/node_modules/material-design-lite/material.min.css">
+        <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     </head>
     <body>
-        <div class="container">
-            <div class="row">
-                <div class="page-header">
-                    <h1>
-                        <span>Basic control interface</span>
-                    </h1>
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+            <header class="mdl-layout__header">
+                <div class="mdl-layout__header-row">
+                    <span class="mdl-layout-title">Hasy Unit Interface</span>
                 </div>
-            </div>
-            <div class="row" data-bind="if: unit">
-                <ul class="nav nav-tabs" role="tablist" data-bind="foreach: units" style="margin-bottom: 20px;">
-                    <li role="presentation" data-bind="css: { active: $parent.unit() === $data }">
-                        <a href="#" role="tab" data-bind="text: $data.name, click: $parent.unit.bind(null, $data)"></a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active">
-                        <table class="table table-striped">
-                            <tbody data-bind="foreach: properties">
-                                <tr>
-                                    <th style="width: 160px;" data-bind="text: $data.name"></th>
-                                    <td>
-                                        <div data-bind="visible: $data.type !== 'range' && $data.type !== 'enum'">
-                                            <table style="width: 100%;">
-                                                <tr>
-                                                    <td>
-                                                        <input type="text" class="form-control input-sm" data-bind="value: $data.input, disable: $data.disabled">
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" style="margin-left: 10px;" class="btn btn-sm btn-primary" data-bind="click: setProperty.bind(null, $data, $data.input)">Execute</button>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        <div data-bind="visible: $data.type === 'range'">
-                                            <div data-bind="slider: $data"></div>
-                                        </div>
-                                        <div data-bind="visible: $data.type === 'enum'">
-                                            <div class="btn-group" role="group" data-bind="foreach: $data.values">
-                                                <button type="button" class="btn btn-default" data-bind="text: $data, css: { active: $data === $parent.value(), 'btn-primary': $data === $parent.value() }, click: setProperty.bind(null,$parent, $data)"></button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="alert alert-info" role="alert" data-bind="text: message, visible: message() !== '', attr: { class: 'alert alert-' + messageType() }" style="white-space: pre"></div>
-                    </div>
+            </header>
+            <main class="mdl-layout__content">
+                <div class="page-content">
+                    <table class="mdl-data-table mdl-js-data-table" style="width: 100%;">
+                        <tbody data-bind="foreach: properties">
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric" data-bind="text: $data.unitName + ' > ' + $data.name">Acrylic (Transparent)</td>
+                                <td style="text-align: left;">
+                                    <div data-bind="component: { name: 'property-' + $data.type, params: { property: $data } }"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            </main>
         </div>
 
-        <script src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
-        <script src="node_modules/knockout/build/output/knockout-latest.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-
-        <script>
-            ko.bindingHandlers.slider = {
-                init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-                    var property = valueAccessor();
-                    var options = {
-                        value: parseInt(ko.unwrap(property.value), 10),
-                        min: property.min,
-                        max: property.max,
-                        step: property.step
-                    };
-
-                    element.slider = $(element).slider(options);
-
-                    var subscription1 = property.value.subscribe(function(value) {
-                        element.slider.slider("setValue", parseInt(value, 10));
-                    });
-
-                    var subscription2 = property.disabled.subscribe(function(value) {
-                        element.slider.slider({ "disabled": value });
-                    });
-
-                    $(element).on("slideStop", function(event) {
-                        setProperty(property, event.value);
-                    });
-
-                    ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                        subscription1.dispose();
-                        subscription2.dispose();
-                        element.slider.slider("destroy");
-                        $(element).off("slideStop");
-                    });
-                }
-            };
-
-            var actionIdCounter = 1;
-            var actions = {};
-
-
-            function setProperty(property, value) {
-                var actionId = actionIdCounter++;
-                property.disabled(true);
-
-                socket.emit("setProperty", { unitId: property.unitId, name: property.name, value: ko.unwrap(value), actionId: actionId });
-
-                actions[actionId] = property;
-            }
-
-            var socket = io.connect();
-            var Model = function() {
-                this.units = ko.observableArray();
-                this.unit = ko.observable(false);
-                this.message = ko.observable("");
-                this.messageType = ko.observable("info");
-
-                this.set = function(data) {
-                    setProperty(data);
-                }.bind(this);
-
-                this.properties = ko.pureComputed(function() {
-                    if (!this.unit()) {
-                        return [];
-                    }
-
-                    var list = [];
-
-                    $.each(this.unit().properties, function(name, property) {
-                        list.push(property);
-                    });
-
-                    return list;
-                }.bind(this));
-            };
-
-            var model = new Model();
-
-            socket.on("propertyChange", function(data) {
-                console.log("propertyChange", data);
-
-                var unit = model.units().filter(function(unit) {
-                    return unit.unitId === data.unitId;
-                })[0];
-
-                if (!unit) {
-                    console.error("Got property change for unknown unit", data);
-                    return;
-                }
-
-                unit.properties[data.data.name].value(data.data.newValue);
-                unit.properties[data.data.name].input(data.data.newValue);
-
-                if (data.actionId && actions[data.actionId]) {
-                    actions[data.actionId].disabled(false);
-
-                    delete actions[data.actionId];
-                }
-
-                model.message(JSON.stringify(data, null, 2));
-                model.messageType("success");
-            });
-
-            socket.on("error", function(data) {
-                console.log("error", data);
-
-                if (data.actionId && actions[data.actionId]) {
-                    actions[data.actionId].disabled(false);
-                    actions[data.actionId].input(actions[data.actionId].value());
-
-                    delete actions[data.actionId];
-                }
-
-                model.message(JSON.stringify(data, null, 2));
-                model.messageType("danger");
-            });
-
-            socket.emit("getUnits", {}, function(list) {
-                console.log(list);
-
-                model.units.removeAll();
-
-                $.each(list, function(key, unit) {
-                    unit.unitId = key;
-
-                    $.each(unit.properties, function(name, value) {
-                        unit.properties[name].input = ko.observable(unit.properties[name].value);
-                        unit.properties[name].value = ko.observable(unit.properties[name].value);
-                        unit.properties[name].disabled = ko.observable(false);
-                        unit.properties[name].unitId = unit.unitId;
-                    });
-
-                    model.units.push(unit);
-
-                    if (!model.unit()) {
-                        model.unit(unit);
-                    }
-                });
-            });
-
-            model.unit.subscribe(function(value) {
-                document.title = "Control | " + value;
-            });
-
-            $(function() {
-                ko.applyBindings(model, $("body").get(0));
-            });
-        </script>
+        <script data-main="index" src="node_modules/requirejs/require.js"></script>
     </body>
 </html>

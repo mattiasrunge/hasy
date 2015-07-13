@@ -4,6 +4,10 @@ let promisifyAll = require("bluebird").promisifyAll;
 let co = require("bluebird").coroutine;
 let fs = promisifyAll(require("fs"));
 let path = require("path");
+let express = require("express");
+let app = express();
+let server = require("http").Server(app);
+let io = require("socket.io")(server);
 let logger = require("../lib/logger")(module);
 
 module.exports = function() {
@@ -23,6 +27,29 @@ module.exports = function() {
         // Default values
         config.hosts = config.hosts || [];
         config.servers = config.servers || [];
+        config.port = config.port || 3001;
+    }, this);
+
+    this.startServer = co(function*() {
+        // Serve static documents
+        app.use(express.static(path.join(__dirname, "public")));
+
+        // Setup client APIs
+        io.on("connection", function(socket) {
+            logger.info("A new websocket client connected from " + socket.handshake.address.address);
+/*
+            socket.on("setProperty", function(data) {
+                if (!data.unitId || !data.name || typeof data.value === "undefined") {
+                    console.error("Malformed setProperty data", data);
+                    return;
+                }
+
+                this.units[data.unitId].instance.setProperty(data.name, data.value, data.actionId);
+            }.bind(this));*/
+        }.bind(this));
+
+        // Start HTTP server
+        server.listen(config.port);
     }, this);
 
     this.start = co(function*(argv) {
@@ -32,6 +59,8 @@ module.exports = function() {
             yield this.connectToServers();
 
             yield this.loadPolicies();
+
+            yield this.startServer();
 
             logger.info("Hasy Control initialized!");
         } catch (error) {

@@ -9,9 +9,10 @@
   "author": "Mattias Runge <mattias@runge.se>",
   "license": "GPL-2.0",
   "dependencies": {
-    "bootstrap": "^3.3.5",
-    "bootstrap-slider": "^4.10.0",
-    "jquery": "^2.1.4",
-    "knockout": "^3.3.0"
+    "knockout": "^3.3.0",
+    "material-design-lite": "^1.0.0",
+    "napa": "^1.2.0",
+    "requirejs": "^2.1.19",
+    "requirejs-text": "^2.0.12"
   }
 }
