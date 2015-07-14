@@ -1,5 +1,5 @@
 <div data-bind="if: property()">
-    <div class="mdl-textfield mdl-js-textfield" data-bind="{ disabled: property().disabled, value: property().value }" style="width: auto; display: block; padding: 20px;">
+    <div class="mdl-textfield mdl-js-textfield" data-bind="{ disabled: property().disabled, value: property().value }" style="width: auto; display: block; padding: 0;">
         <textarea class="mdl-textfield__input" type="text" rows="1" data-bind="textInput: property().value, attr: { rows: property().value() ? Math.max(property().value().toString().split('\n').length, 1) : 1 }"></textarea>
     </div>
 </div>
