@@ -6,15 +6,21 @@
             "name": "Receivern",
             "hostname": "192.168.1.3"
         },
-        "vardagsrumstak": {
-            "type": "tellduslight",
+        "livingroom-ceiling": {
+            "type": "telldusdimmmer",
             "name": "Vardagsrummet Tak",
             "id": 2
         },
-        "pbutton": {
+        "livingroom-vitrine": {
+            "type": "telldusswitch",
+            "name": "Vardagsrummet Vintrinskåp",
+            "id": 6
+        },
+        "keyboard": {
             "type": "kbbutton",
-            "name": "P-button",
-            "keys": [ ]
+            "name": "Button",
+            "keys": [ "KEY_P", "KEY_M" ],
+            "device": "/dev/input/event3"
         },
         "jawbonesleep": {
           "token": "<insert your pushbullet token here>",
@@ -23,11 +29,17 @@
           "match": "(enabled|disabled)",
           "matchGroup": 1
         },
-        "vardagsrumstv": {
+        "livingroom-tv": {
             "type": "lgtv",
             "name": "Vardagsrummet TV",
             "device": "/dev/ttyUSB0",
             "baudrate": 9600
         }
-    }
+    },
+    "servers": [
+        "http://localhost:4000"
+    ],
+    "policies": [
+        "mattias/media"
+    ]
 }
