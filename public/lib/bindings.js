@@ -97,4 +97,25 @@ define([
             }
         }
     };
+
+    ko.bindingHandlers.textfield = {
+        init: function(element, valueAccessor) {
+            var value = ko.unwrap(valueAccessor());
+
+            componentHandler.upgradeElement(element, "MaterialTextfield");
+
+            var s = value.disabled.subscribe(function(value) {
+                if (value) {
+                    element.MaterialTextfield.disable();
+                } else {
+                    element.MaterialTextfield.enable();
+                }
+            });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                downgradeElements(element.MaterialTextfield);
+                s.dispose();
+            });
+        }
+    };
 });

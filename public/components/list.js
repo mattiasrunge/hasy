@@ -6,7 +6,8 @@ define([
     var list = [
         "property-range",
         "property-enum",
-        "property-switch"
+        "property-switch",
+        "property-data"
     ];
 
     for (var n = 0; n < list.length; n++) {
