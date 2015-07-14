@@ -14,7 +14,7 @@ define([
             });
             subscriptions = [];
 
-            socket.emit("getProperties", {}, function(list) {
+            socket.emit("getProperties", {}, function(error, list) {
                 console.log("getProperties", list);
 
                 list = list.map(function(property) {

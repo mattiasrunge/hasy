@@ -1,8 +1,0 @@
-{
-    "servers": [
-        "http://localhost:3000"
-    ],
-    "policies": [
-        "mattias/media"
-    ]
-}
