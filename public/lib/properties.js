@@ -13,12 +13,13 @@ define([
                 subscription.dispose();
             });
             subscriptions = [];
+            this.list.removeAll();
 
             socket.emit("getProperties", {}, function(error, list) {
                 console.log("getProperties", list);
 
                 list = list.map(function(property) {
-                    console.log(property, property.value);
+                    //console.log(property);
                     property.value = ko.observable(property.value);
                     property.disabled = ko.observable(false);
 

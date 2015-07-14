@@ -20,7 +20,7 @@ define([
             element.MaterialSlider.change(ko.unwrap(value.value));
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                downgradeElements(element.MaterialSlider);
+                componentHandler.downgradeElements(element);
                 s.dispose();
             });
 
@@ -49,7 +49,7 @@ define([
             });
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                downgradeElements(element.MaterialRadio);
+                componentHandler.downgradeElements(element);
                 s.dispose();
             });
         },
@@ -84,7 +84,7 @@ define([
             }
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                downgradeElements(element.MaterialSwitch);
+                componentHandler.downgradeElements(element);
                 s.dispose();
             });
         },
@@ -113,7 +113,7 @@ define([
             });
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                downgradeElements(element.MaterialTextfield);
+                componentHandler.downgradeElements(element);
                 s.dispose();
             });
         }
