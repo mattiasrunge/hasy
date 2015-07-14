@@ -23,7 +23,7 @@
                             <tr>
                                 <td class="mdl-data-table__cell--non-numeric" data-bind="text: $data.unitName + ' > ' + $data.name"></td>
                                 <td style="text-align: left;">
-                                    <div data-bind="component: { name: 'property-' + $data.type, params: { property: $data } }"></div>
+                                    <div data-bind="component: { name: 'property-' + $data.type, params: { unitId: $data.unitId, name: $data.name } }"></div>
                                 </td>
                             </tr>
                         </tbody>

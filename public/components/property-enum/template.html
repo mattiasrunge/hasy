@@ -1,6 +1,8 @@
-<div data-bind="foreach: values">
-    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" data-bind="radio: { disabled: $parent.disabled, checked: $parent.value() === $data }">
-        <input type="radio" class="mdl-radio__button" name="options" data-bind="attr: { name: $parent.name, value: $data }, checked: $parent.value">
-        <span class="mdl-radio__label" data-bind="text: $data"></span>
-    </label>
+<div data-bind="if: property()">
+    <div data-bind="foreach: property().values">
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" data-bind="radio: { disabled: $parent.property().disabled, checked: $parent.property().value() === $data }">
+            <input type="radio" class="mdl-radio__button" name="options" data-bind="attr: { name: $parent.property().name, value: $data }, checked: $parent.property().value">
+            <span class="mdl-radio__label" data-bind="text: $data"></span>
+        </label>
+    </div>
 </div>

@@ -1,16 +1,18 @@
 "use strict";
 
 define([
-    "text!./template.html"
-], function(template) {
+    "text!./template.html",
+    "knockout",
+    "lib/properties"
+], function(template, ko, properties) {
     return {
         template: template,
         viewModel: function(params) {
-            this.min = params.property.min;
-            this.max = params.property.max;
-            this.value = params.property.value;
-            this.step = params.property.step;
-            this.disabled = params.property.disabled;
+            this.property = ko.pureComputed(function() {
+                return properties.list().filter(function(property) {
+                    return property.unitId === ko.unwrap(params.unitId) && property.name === ko.unwrap(params.name);
+                })[0] || false;
+            });
         }
     };
 });
