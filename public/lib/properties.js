@@ -24,6 +24,10 @@ define([
                     property.disabled = ko.observable(false);
 
                     subscriptions.push(property.value.subscribe(function(value) {
+                        if (property.disabled()) {
+                            return; // Already setting property, probably by event
+                        }
+
                         property.disabled(true);
                         socket.emit("setProperty", { unitId: property.unitId, name: property.name, value: value }, function(error) {
                             property.disabled(false);
@@ -53,7 +57,9 @@ define([
                 return;
             }
 
+            property.disabled(true);
             property.value(data.data.newValue);
+            property.disabled(false);
         }.bind(this));
     };
 
