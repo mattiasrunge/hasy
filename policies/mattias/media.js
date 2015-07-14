@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(control) {
+module.exports = function(properties) {
     control.onPropertyChange("button", "Button", function*(event) {
         let actions = [];
 
