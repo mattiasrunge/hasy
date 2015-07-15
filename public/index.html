@@ -7,10 +7,15 @@
         <title>Control</title>
 
         <!-- <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.grey-deep_orange.min.css" /> -->
-        <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-orange.min.css">
-        <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+        <link rel="stylesheet"
+              href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.indigo-orange.min.css">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
         <script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <style type="text/css">
+html>body{font-family:'Roboto','Helvetica','Arial',sans-serif!important;}
+</style>
     </head>
     <body>
       <!-- Simple header with scrollable tabs. -->
@@ -36,10 +41,27 @@
                 <h4 class="mdl-card__title-text" data-bind="text: _unit.name"></h4>
               </div>
               <div class="mdl-card__supporting-text mdl-card__border mdl-grid" data-bind="foreach: { data: Object.keys(_unit.properties), as: '_key' }">
-                <div class="mdl-cell mdl-cell--4-col" data-bind="text: _key"></div>
-                <div class="mdl-cell mdl-cell--4-col"
-                  <p style="width:300px">
-                    <input class="mdl-slider mdl-js-slider" type="range" id="s1" min="0" max="10" value="4" step="2" />
+                <div class="mdl-cell mdl-cell--6-col" data-bind="text: _key"></div>
+                <div class="mdl-cell mdl-cell--6-col">
+                  <div data-bind="visible:
+                                  _unit.properties[_key].type ===
+                                  'enum', foreach:
+                                    _unit.properties[_key].values">
+                    <div>
+                      <label class="mdl-radio mdl-js-radio
+                                    mdl-js-ripple-effect"
+                             role="group" data-bind="attr: { 'for': _unit.name + _key }">
+                        <input type="radio" class="mdl-radio__button"
+                               data-bind="id: _unit.name + _key + $data,
+                                          value: $data, attr: { name: _unit.name +
+                                          _key, checked: $data === _unit.properties[_key].value() }"></input>
+                        <span class="mdl-radio__label"
+                              data-bind="text: $data"></span><br/>
+                      </label>
+                    </div>
+                  </div>
+                  <p style="width:300px" data-bind="visible: _unit.properties[_key].type === 'range'">
+                    <input class="mdl-slider mdl-js-slider" type="range" id="s1" data-bind="attr: { 'min': _unit.properties[_key].min, 'max':_unit.properties[_key].max, 'value': _unit.properties[_key].value(), 'step': _unit.properties[_key].step || 1 }" />
                   </p>
                 </div>
               </div>
