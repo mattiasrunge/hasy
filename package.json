@@ -14,7 +14,8 @@
   "dependencies": {
     "achain.js": "0.0.8",
     "bluebird": "^2.9.26",
-    "express": "4.8.0",
+    "express": "^4.8.0",
+    "express-ifttt-webhook": "^0.2.3",
     "glob": "^5.0.10",
     "raw-keyboard": "0.0.4",
     "request": "^2.55.0",
