@@ -18,6 +18,10 @@ module.exports = function(properties) {
                     properties.set("livingroom-window", "Value", 255);
                     properties.set("livingroom-bar", "Value", 255);
                     properties.set("hall-ceiling", "Value", 255);
+                    properties.set("hall-mirror", "Value", 255);
+                    properties.set("bedroom-wall", "Value", 255);
+                    properties.set("bedroom-ceiling", "Value", 255);
+                    properties.set("bedroom-door", "Value", 255);
                     properties.set("yamahareceiver", "Power", true);
                     properties.set("yamahareceiver", "Source", "AV1");
 
@@ -30,6 +34,10 @@ module.exports = function(properties) {
                     properties.set("livingroom-vitrine", "Value", 0);
                     properties.set("livingroom-bar", "Value", 0);
                     properties.set("hall-ceiling", "Value", 0);
+                    properties.set("hall-mirror", "Value", 0);
+                    properties.set("bedroom-wall", "Value", 0);
+                    properties.set("bedroom-ceiling", "Value", 0);
+                    properties.set("bedroom-door", "Value", 0);
         //             actions.push(control.setProperty("livingroom-tv", "Source", "DTV"));
                 }
             } else if (data.unitId === "nexa-remote" && data.data.newValue.payload.protocol === "arctech") {
