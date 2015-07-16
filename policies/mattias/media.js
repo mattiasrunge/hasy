@@ -10,7 +10,7 @@ module.exports = function(properties) {
                     properties.set("livingroom-ceiling", "Value", 0);
                     properties.set("yamahareceiver", "Power", true);
                     properties.set("yamahareceiver", "Source", "HDMI1");
-        //             actions.push(control.setProperty("vardagsrumstv", "Source", "HDMI2"));
+                    properties.set("livingroom-tv", "Source", "HDMI2");
                 } else if (data.data.newValue === "KEY_F2") {
                     properties.set("livingroom-ceiling", "Value", 255);
                     properties.set("livingroom-ceiling", "Value", 255);
@@ -23,12 +23,12 @@ module.exports = function(properties) {
                     properties.set("bedroom-ceiling", "Value", 255);
                     properties.set("bedroom-door", "Value", 255);
                     properties.set("yamahareceiver", "Power", true);
+                    properties.set("livingroom-tv", "Power", true);
                     properties.set("yamahareceiver", "Source", "AV1");
-
-
-        //             actions.push(control.setProperty("vardagsrumstv", "Source", "DTV"));
+                    properties.set("livingroom-tv", "Source", "DTV");
                 }  else if (data.data.newValue === "KEY_F3") {
                     properties.set("yamahareceiver", "Power", false);
+                    properties.set("livingroom-tv", "Power", false);
                     properties.set("livingroom-ceiling", "Value", 0);
                     properties.set("livingroom-window", "Value", 0);
                     properties.set("livingroom-vitrine", "Value", 0);
@@ -38,7 +38,6 @@ module.exports = function(properties) {
                     properties.set("bedroom-wall", "Value", 0);
                     properties.set("bedroom-ceiling", "Value", 0);
                     properties.set("bedroom-door", "Value", 0);
-        //             actions.push(control.setProperty("livingroom-tv", "Source", "DTV"));
                 }
             } else if (data.unitId === "nexa-remote" && data.data.newValue.payload.protocol === "arctech") {
                 let id = data.data.newValue.payload.group + "_" + data.data.newValue.payload.unit;
