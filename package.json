@@ -17,7 +17,7 @@
     "express": "^4.8.0",
     "express-ifttt-webhook": "^0.2.3",
     "glob": "^5.0.10",
-    "raw-keyboard": "0.0.6",
+    "raw-keyboard": "0.0.7",
     "request": "^2.55.0",
     "serialport": "1.4.5",
     "socket.io": "1.0.6",
